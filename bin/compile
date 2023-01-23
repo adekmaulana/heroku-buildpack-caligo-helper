@@ -4,8 +4,8 @@ APP_DIR="$1"
 ENV_DIR="$3"
 
 # load required environment variables
-CLONE_REPO_URL=$(<"$ENV_DIR/CLONE_REPO_URL")
-CLONE_REPO_BRANCH=$(<"$ENV_DIR/CLONE_REPO_BRANCH")
+CLONE_REPO_URL=$(<"$ENV_DIR/GITHUB_REPO")
+CLONE_REPO_BRANCH=$(<"$ENV_DIR/GITHUB_REPO_BRANCH")
 
 if [[ -z $CLONE_REPO_URL ]]; then
     echo "Did you forget to set CLONE_REPO_URL?"
@@ -36,7 +36,7 @@ echo "   UserKnownHostsFile /dev/null" >> ~/.ssh/config
 echo "   LogLevel ERROR" >> ~/.ssh/config
 echo "-----> Created .ssh/config"
 
-
-git clone -b $CLONE_REPO_BRANCH --depth 1 --recursive --shallow-submodules $CLONE_REPO_URL $APP_DIR/__repo
-rm -rf .git
-echo "-----> Cloned repo"
+git clone -b $CLONE_REPO_BRANCH $CLONE_REPO_URL $APP_DIR/__repo
+cp -r $APP_DIR/__repo/.git $APP_DIR/.git
+rm -rf $APP_DIR/__repo
+echo "-----> Repo cloned"
