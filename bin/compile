@@ -6,14 +6,26 @@ ENV_DIR="$3"
 # load required environment variables
 CLONE_REPO_URL=$(<"$ENV_DIR/GITHUB_REPO")
 CLONE_REPO_BRANCH=$(<"$ENV_DIR/GITHUB_REPO_BRANCH")
+DOWNLOAD_CONFIG=$(<"$ENV_DIR/CONFIG")
+TOKEN=$(<"$ENV_DIR/GITHUB_TOKEN")
 
 if [[ -z $CLONE_REPO_URL ]]; then
-    echo "Did you forget to set CLONE_REPO_URL?"
+    echo "Did you forget to set GITHUB_REPO?"
     exit 1
 fi
 
 if [[ -z $CLONE_REPO_BRANCH ]]; then
-    echo "Did you forget to set CLONE_REPO_BRANCH?"
+    echo "Did you forget to set GITHUB_REPO_BRANCH?"
+    exit 1
+fi
+
+if [[ -z $DOWNLOAD_CONFIG ]]; then
+    echo "Did you forget to set CONFIG?"
+    exit 1
+fi
+
+if [[ -z $TOKEN ]]; then
+    echo "Did you forget to set GITHUB_TOKEN?"
     exit 1
 fi
 
@@ -40,3 +52,6 @@ git clone -b $CLONE_REPO_BRANCH $CLONE_REPO_URL $APP_DIR/__repo
 cp -r $APP_DIR/__repo/.git $APP_DIR/.git
 rm -rf $APP_DIR/__repo
 echo "-----> Repo cloned"
+
+echo "-----> Importing config from gist"
+curl -s $DOWNLOAD_CONFIG?token=$TOKEN -o $APP_DIR/config.toml
